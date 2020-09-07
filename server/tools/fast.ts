@@ -42,6 +42,7 @@ interface IFast extends FastifyInstance<any> {
   ServiceDEL: {[url:string]:(req: IFastFn) => any}
   ServiceOPTIONS: {[url:string]:(req: IFastFn) => any}
   Start:(port:number)=>void;
+  useCors: ()=>any;
 }
 
 export const fast: IFast = fastify({ logger: false }) as any;
@@ -99,14 +100,13 @@ function baseFn(key:string){
   };
 }
 
-fast.POST = baseFn('post');
-fast.DEL = baseFn('delete');
-fast.OPTIONS = baseFn('options');
+fast.POST = baseFn("post");
+fast.DEL = baseFn("delete");
+fast.OPTIONS = baseFn("options");
 
-// 开发环境打开 cors
-if (true) {
+fast.useCors = ()=>{
   fast.register(fastifyCors);
-}
+};
 
 fast.register(fastfyHelment);
 fast.register(fastifyCompress);

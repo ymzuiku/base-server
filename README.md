@@ -10,10 +10,18 @@
 yarn ser
 ```
 
-开发环境：
+编译：
 
 ```sh
-yarn ser
+yarn build:dev
+```
+
+```sh
+yarn build:test
+```
+
+```sh
+yarn build:prod
 ```
 
 

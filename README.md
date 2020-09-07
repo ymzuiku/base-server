@@ -67,7 +67,7 @@ fast.GET("/hello", ({ body }) => {
 在编译时，根据环境变量，我们会复制相应的 env/env.dev.js 或者 env/env.prod.js 覆盖 dist/env.js
 
 
-引用 env:
+由于env不太适合使用硬编码，所以使用js引用，方便上线后方便修改env.js:
 ```js
 const env = require('./env.js');
 ```

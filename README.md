@@ -1,6 +1,6 @@
 # base-server
 
-这是一个使用 fastify 封装的一个基础web服务, 整个工程是一个轻量 ts 工程。
+这是一个使用 fastify 封装的一个基础web服务, 整个工程是一个轻量 ts 工程, 开发环境使用 nodemon, 编译使用 esbuild
 
 ## Start
 

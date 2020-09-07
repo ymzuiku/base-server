@@ -20,8 +20,7 @@ self-rsync
 **/build
 **/dist
 **/public/dll
-**/server/env/index.ts
-**/env/index.js
+**/env/env.dev.js
 
 # cache
 **/.cache

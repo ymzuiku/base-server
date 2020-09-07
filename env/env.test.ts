@@ -1,4 +1,4 @@
 module.exports = {
-  env: "dev",
+  env: "test",
   dev: true,
 };

@@ -2,7 +2,22 @@
 
 这是一个使用 fastify 封装的一个基础web服务, 整个工程是一个轻量 ts 工程。
 
-## feature
+## Start
+
+开发环境：
+
+```sh
+yarn ser
+```
+
+开发环境：
+
+```sh
+yarn ser
+```
+
+
+## Feature
 
 ### 路由封装
 
@@ -36,7 +51,13 @@ fast.GET("/hello", ({ body }) => {
 
 ### env 环境
 
+/env
+  /env.dev.js (.gitignore已忽略此文件，若需要，本地自行创建，若使用dev环境并且无env.dev.js 文件，会自动使用env.test.js)
+  /env.prod.js
+  /env.test.js
+
 在编译时，根据环境变量，我们会复制相应的 env/env.dev.js 或者 env/env.prod.js 覆盖 dist/env.js
+
 
 引用 env:
 ```js

@@ -118,7 +118,11 @@ watcher.on("event", (event) => {
       }
     });
     // 拷贝环境变量
-    fs.copyFileSync(`env/env.${process.env.env}.js`, "dist/env.js");
+    let envFile = `env/env.${process.env.env}.js`;
+    if (!fs.existsSync(envFile)) {
+      let envFile = `env/env.test.js`;
+    }
+    fs.copyFileSync(envFile, "dist/env.js");
     // copyDirList.forEach((dir) => {
     //   fs.readdirSync(dir).forEach((f) => {
     //     fs.copySync(dir + "/" + f, "./dist/" + f);

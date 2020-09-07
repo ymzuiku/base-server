@@ -9,6 +9,7 @@
   "scripts": {
     "eslint-server": "eslint --ext .tsx,.ts --cache --fix ./server",
     "build:dev": "env=dev node rollup.server.js",
+    "build:test": "env=test node rollup.server.js",
     "build:prod": "env=prod node rollup.server.js",
     "ser": "yarn build:dev -w & cd dist && nodemon index.js"
   },

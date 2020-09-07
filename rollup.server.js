@@ -86,7 +86,7 @@ const watchOptions = {
 const watcher = rollup.watch(watchOptions);
 
 const copyList = ["yarn.lock"];
-const copyDirList = ["server/env"];
+const copyDirList = ["static"];
 
 // event.code can be one of:
 //   START        — the watcher is (re)starting
@@ -123,11 +123,11 @@ watcher.on("event", (event) => {
       const envFile = "env/env.test.js";
     }
     fs.copyFileSync(envFile, "dist/env.js");
-    // copyDirList.forEach((dir) => {
-    //   fs.readdirSync(dir).forEach((f) => {
-    //     fs.copySync(dir + "/" + f, "./dist/" + f);
-    //   });
-    // });
+    copyDirList.forEach((dir) => {
+      fs.readdirSync(dir).forEach((f) => {
+        fs.copySync(dir + "/" + f, "./dist/" + f);
+      });
+    });
     if (!haveArgv("--watch", "-w")) {
       watcher.close();
     }

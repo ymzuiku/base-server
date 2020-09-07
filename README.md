@@ -71,3 +71,6 @@ fast.GET("/hello", ({ body }) => {
 ```js
 const env = require('./env.js');
 ```
+### static 文件夹
+
+若有需要附带发布的资源文件，放置 static 文件夹中，该文件夹内的资源会在编译时拷贝至 dist

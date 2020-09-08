@@ -43,6 +43,17 @@ function haveArgv(...args) {
   return isHave;
 }
 
+function copyEnv() {
+  // 拷贝环境变量
+  let envFile = `env/env.${env}.js`;
+  if (!fs.existsSync(envFile)) {
+    envFile = "env/env.test.js";
+  }
+  fs.copyFileSync(envFile, "dist/env.js");
+}
+
+copyEnv();
+
 clearDir(pwd("dist"));
 
 const watchOptions = {
@@ -127,12 +138,7 @@ watcher.on("event", (event) => {
         fs.copyFileSync(f, "./dist/" + f);
       }
     });
-    // 拷贝环境变量
-    const envFile = `env/env.${env}.js`;
-    if (!fs.existsSync(envFile)) {
-      const envFile = "env/env.test.js";
-    }
-    fs.copyFileSync(envFile, "dist/env.js");
+    copyEnv();
     copyDirList.forEach((dir) => {
       fs.readdirSync(dir).forEach((f) => {
         fs.copySync(dir + "/" + f, "./dist/" + f);

@@ -12,6 +12,16 @@ const fs = require("fs-extra");
 const esbuild = require("rollup-plugin-esbuild");
 const argv = process.argv.splice(2);
 
+let env = "dev";
+argv.forEach((item) => {
+  if (/=/.test(item)) {
+    const [k, v] = item.split("=");
+    if (k === "env") {
+      env = v;
+    }
+  }
+});
+
 function clearDir(dir) {
   if (fs.existsSync(dir)) {
     const files = fs.readdirSync(dir);
@@ -118,7 +128,7 @@ watcher.on("event", (event) => {
       }
     });
     // 拷贝环境变量
-    const envFile = `env/env.${process.env.env}.js`;
+    const envFile = `env/env.${env}.js`;
     if (!fs.existsSync(envFile)) {
       const envFile = "env/env.test.js";
     }

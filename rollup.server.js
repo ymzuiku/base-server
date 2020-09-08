@@ -28,6 +28,8 @@ function clearDir(dir) {
     files.forEach((file) => {
       fs.remove("${dir}/${file}");
     });
+  } else {
+    fs.mkdirSync("dist");
   }
 }
 function haveArgv(...args) {
@@ -43,6 +45,7 @@ function haveArgv(...args) {
   return isHave;
 }
 
+clearDir(pwd("dist"));
 function copyEnv() {
   // 拷贝环境变量
   let envFile = `env/env.${env}.js`;
@@ -53,8 +56,6 @@ function copyEnv() {
 }
 
 copyEnv();
-
-clearDir(pwd("dist"));
 
 const watchOptions = {
   external: [

@@ -11,10 +11,14 @@ const pkg = require("./package.json");
 const fs = require("fs-extra");
 const esbuild = require("rollup-plugin-esbuild");
 const argv = process.argv.splice(2);
+const cluster = require("cluster");
 
 let env = "dev";
+let isWatch = false;
 argv.forEach((item) => {
-  if (/=/.test(item)) {
+  if (item === "-w") {
+    isWatch = true;
+  } else if (/=/.test(item)) {
     const [k, v] = item.split("=");
     if (k === "env") {
       env = v;
@@ -57,6 +61,19 @@ function copyEnv() {
 
 copyEnv();
 
+// yarn ser 自动重启处理
+if (isWatch && cluster.isMaster) {
+  cluster.fork();
+  cluster.on("exit", (worker, code, signal) => {
+    cluster.fork();
+  });
+}
+if (cluster.isWorker) {
+  console.log(`Worker ${process.pid} started`);
+  require("./dist/index.js");
+  return;
+}
+
 const watchOptions = {
   external: [
     ...Object.keys(pkg.dependencies || {}),
@@ -73,7 +90,7 @@ const watchOptions = {
   output: {
     file: "./dist/index.js",
     format: "cjs",
-    name: pkg.name,
+    name: "fast",
     sourcemap: true,
     globals: {
       react: "React",
@@ -84,24 +101,10 @@ const watchOptions = {
       // All options are optional
       include: /\.(ts|tsx|js|jsx)?$/, // default, inferred from `loaders` option
       exclude: /node_modules/, // default
-      watch: process.argv.includes("--watch"),
       sourceMap: false, // default
-      minify: process.env.NODE_ENV === "production",
       target: "es2017", // default, or 'es20XX', 'esnext'
-      // jsxFactory: 'React.createElement',
-      // jsxFragment: 'React.Fragment'
-      // Like @rollup/plugin-replace
-      // define: {
-      //   __VERSION__: '"x.y.z"'
-      // },
-      // Add extra loaders
-      // loaders: {
-      //   // Add .json files support
-      //   // require @rollup/plugin-commonjs
-      //   // '.json': 'json',
-      //   // Enable JSX in .js files too
-      //   '.js': 'jsx'
-      // }
+      // watch: process.argv.includes("--watch"),
+      // minify: process.env.NODE_ENV === "production",
     }),
   ],
 };
@@ -119,10 +122,14 @@ const copyDirList = ["static"];
 //   FATAL        — encountered an unrecoverable error
 watcher.on("event", (event) => {
   if (event.code === "ERROR") {
-    console.log(event);
+    console.log("ERROR", event);
   } else if (event.code === "BUNDLE_END") {
-    // console.log(event);
-    console.log("BUNDLE_END");
+    for (const id in cluster.workers) {
+      cluster.workers[id].process.kill();
+    }
+    // if (!isWatch && cluster.isMaster) {
+    //   console.log("BUNDLE_END");
+    // }
   } else if (event.code === "END") {
     Object.keys(pkg.devDependencies).forEach((k) => {
       if (

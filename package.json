@@ -11,7 +11,7 @@
     "build:dev": "node rollup.server.js env=dev",
     "build:test": "node rollup.server.js env=test",
     "build:prod": "node rollup.server.js env=prod",
-    "ser": "yarn build:dev -w & cd dist && nodemon index.js"
+    "ser": "yarn build:dev -w"
   },
   "husky": {
     "hooks": {
@@ -45,7 +45,6 @@
     "husky": "^4.2.5",
     "lint-staged": "^10.2.11",
     "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.4",
     "rollup": "^2.23.0",
     "rollup-plugin-esbuild": "^2.4.2",
     "rollup-plugin-node-resolve": "^5.2.0",

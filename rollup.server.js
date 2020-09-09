@@ -13,6 +13,12 @@ const esbuild = require("rollup-plugin-esbuild");
 const argv = process.argv.splice(2);
 const cluster = require("cluster");
 
+if (cluster.isWorker) {
+  console.log(`Worker ${process.pid} started`);
+  require("./dist/index.js");
+  return;
+}
+
 let env = "dev";
 let isWatch = false;
 argv.forEach((item) => {
@@ -61,19 +67,6 @@ function copyEnv() {
 
 copyEnv();
 
-// yarn ser 自动重启处理
-if (isWatch && cluster.isMaster) {
-  cluster.fork();
-  cluster.on("exit", (worker, code, signal) => {
-    cluster.fork();
-  });
-}
-if (cluster.isWorker) {
-  console.log(`Worker ${process.pid} started`);
-  require("./dist/index.js");
-  return;
-}
-
 const watchOptions = {
   external: [
     ...Object.keys(pkg.dependencies || {}),
@@ -112,6 +105,7 @@ const watcher = rollup.watch(watchOptions);
 
 const copyList = ["yarn.lock"];
 const copyDirList = ["static"];
+let firstForkLock = false;
 
 // event.code can be one of:
 //   START        — the watcher is (re)starting
@@ -131,6 +125,14 @@ watcher.on("event", (event) => {
     //   console.log("BUNDLE_END");
     // }
   } else if (event.code === "END") {
+    // yarn ser 自动重启处理
+    if (!firstForkLock && isWatch && cluster.isMaster) {
+      firstForkLock = true;
+      cluster.fork();
+      cluster.on("exit", (worker, code, signal) => {
+        cluster.fork();
+      });
+    }
     Object.keys(pkg.devDependencies).forEach((k) => {
       if (
         /(@type|eslint|vite|cypress|rollup|prettier|husky|lint-staged|typescript|nodemon)/.test(

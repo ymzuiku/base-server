@@ -17,13 +17,20 @@ import { IncomingMessage, ServerResponse } from "http";
 import { Http2ServerRequest, Http2ServerResponse } from "http2";
 
 const pwd = (...args: string[]) => resolve(process.cwd(), ...args);
-export type IRequest = FastifyRequest<
-RouteGenericInterface,
-any,
-IncomingMessage | Http2ServerRequest
->;
-export type IReply = FastifyReply<any, IncomingMessage | Http2ServerRequest, ServerResponse | Http2ServerResponse, RouteGenericInterface, unknown>
 
+export type IRequest = FastifyRequest<
+  RouteGenericInterface,
+  any,
+  IncomingMessage | Http2ServerRequest
+>;
+
+export type IReply = FastifyReply<
+  any,
+  IncomingMessage | Http2ServerRequest,
+  ServerResponse | Http2ServerResponse,
+  RouteGenericInterface,
+  unknown
+>;
 
 export interface IFastFn {
   body: any;
@@ -32,17 +39,24 @@ export interface IFastFn {
   replyHeaders: any;
 }
 
+export interface IFastServiceFn {
+  body?: any;
+  params?: any;
+  headers?: any;
+  replyHeaders?: any;
+}
+
 interface IFast extends FastifyInstance<any> {
   POST: (path: string, fn: (req: IFastFn) => any) => any;
   GET: (path: string, fn: (req: IFastFn) => any) => any;
   DEL: (path: string, fn: (req: IFastFn) => any) => any;
   OPTIONS: (path: string, fn: (req: IFastFn) => any) => any;
-  ServicePOST: {[url:string]:(req: IFastFn) => any}
-  ServiceGET: {[url:string]:(req: IFastFn) => any}
-  ServiceDEL: {[url:string]:(req: IFastFn) => any}
-  ServiceOPTIONS: {[url:string]:(req: IFastFn) => any}
-  Start:(port:number)=>void;
-  useCors: ()=>any;
+  ServicePOST: { [url: string]: (req: IFastServiceFn) => any };
+  ServiceGET: { [url: string]: (req: IFastServiceFn) => any };
+  ServiceDEL: { [url: string]: (req: IFastServiceFn) => any };
+  ServiceOPTIONS: { [url: string]: (req: IFastServiceFn) => any };
+  Start: (port: number) => void;
+  useCors: () => any;
 }
 
 export const fast: IFast = fastify({ logger: false }) as any;
@@ -58,7 +72,7 @@ fast.GET = (path: string, fn: (req: IFastFn) => any) => {
       fn({
         params: req.params || {},
         body: req.query || {},
-        headers: req.headers  || {},
+        headers: req.headers || {},
         replyHeaders: rep.headers,
       })
     );
@@ -69,19 +83,18 @@ fast.GET = (path: string, fn: (req: IFastFn) => any) => {
   });
 };
 
-
-function baseFn(key:string){
+function baseFn(key: string) {
   return (path: string, fn: (req: IFastFn) => any) => {
     (fast as any)[`Service${key.toLocaleUpperCase()}`][path] = fn;
-    (fast as any)[key](path, async (req:IRequest, rep:IReply) => {
-      let body:any;
+    (fast as any)[key](path, async (req: IRequest, rep: IReply) => {
+      let body: any;
       try {
         if (req.body) {
           body = JSON.parse(req.body as any);
         } else {
           body = {};
         }
-      } catch(err){
+      } catch (err) {
         return rep.code(401).send({ code: 400, error: "body parse error" });
       }
       const data = await Promise.resolve(
@@ -93,7 +106,9 @@ function baseFn(key:string){
         })
       );
       if (!data) {
-        return rep.code(500).send({ code: 500, error: "Server no return data" });
+        return rep
+          .code(500)
+          .send({ code: 500, error: "Server no return data" });
       }
       return rep.code(data.code || 200).send(data);
     });
@@ -104,7 +119,7 @@ fast.POST = baseFn("post");
 fast.DEL = baseFn("delete");
 fast.OPTIONS = baseFn("options");
 
-fast.useCors = ()=>{
+fast.useCors = () => {
   fast.register(fastifyCors);
 };
 

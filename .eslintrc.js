@@ -22,6 +22,7 @@ module.exports = {
     browser: true,
     es2020: true,
     node: true,
+    "jest/globals": true,
   },
   extends: [
     "plugin:cypress/recommended",
@@ -34,11 +35,17 @@ module.exports = {
     ecmaVersion: 11,
     sourceType: "module",
   },
-  plugins: ["prettier", "@typescript-eslint"],
+  plugins: ["prettier", "@typescript-eslint", "jest"],
   globals: {
     $: true,
+    test: true,
   },
   rules: {
+    "jest/no-disabled-tests": "warn",
+    "jest/no-focused-tests": "error",
+    "jest/no-identical-title": "error",
+    "jest/prefer-to-have-length": "warn",
+    "jest/valid-expect": "error",
     "prettier/prettier": 1,
     "no-empty": 0,
     "no-constant-condition": 0,
@@ -71,14 +78,15 @@ module.exports = {
     "@typescript-eslint/no-var-requires": 0,
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/indent": [
-      "error",
-      2,
-      {
-        VariableDeclarator: 4,
-        SwitchCase: 1,
-      },
-    ],
+    "@typescript-eslint/indent": 0,
+    // "@typescript-eslint/indent": [
+    //   "error",
+    //   2,
+    //   {
+    //     VariableDeclarator: 4,
+    //     SwitchCase: 1,
+    //   },
+    // ],
     "@typescript-eslint/no-unused-vars": 0,
     "@typescript-eslint/interface-name-prefix": 0,
     "@typescript-eslint/explicit-member-accessibility": 0,

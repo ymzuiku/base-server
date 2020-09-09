@@ -30,6 +30,7 @@
     "outDir": "./umd",
     "jsx": "preserve",
     "types": [
+      "jest",
       "cypress"
     ]
   },
@@ -41,9 +42,12 @@
     "dist"
   ],
   "include": [
+    "jest",
     "lib",
     "scripts2",
     "server",
-    "cypress/integration", "cypress/utils", "static/code.js"
+    "cypress/integration",
+    "cypress/utils",
+    "static/code.js"
   ]
 }

@@ -12,10 +12,18 @@ const fs = require("fs-extra");
 const esbuild = require("rollup-plugin-esbuild");
 const argv = process.argv.splice(2);
 const cluster = require("cluster");
+const errorPath = "./node_modules/.cache_rollup_server_error.js";
 
 if (cluster.isWorker) {
-  console.log(`Worker ${process.pid} started`);
-  require("./dist/index.js");
+  // 监听Promise没有被捕获的失败函数
+  process.on("unhandledRejection", function (err, promise) {
+    console.error("222", err);
+  });
+  try {
+    require("./dist/index.js");
+  } catch (error) {
+    console.error(error);
+  }
   return;
 }
 
@@ -128,6 +136,7 @@ watcher.on("event", (event) => {
     // yarn ser 自动重启处理
     if (!firstForkLock && isWatch && cluster.isMaster) {
       firstForkLock = true;
+
       cluster.fork();
       cluster.on("exit", (worker, code, signal) => {
         cluster.fork();

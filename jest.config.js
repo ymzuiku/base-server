@@ -9,10 +9,11 @@ module.exports = {
   // bail: 0,
 
   // The directory where Jest should store its cached dependency information
-  // cacheDirectory: "/private/var/folders/5_/s3l8xl2d36zbvdlzkysdb46h0000gp/T/jest_dy",
+  cacheDirectory: "./node_modules/.cache-jest_dy",
 
   // Automatically clear mock calls and instances between every test
   clearMocks: true,
+  noCache: true,
 
   // Indicates whether the coverage information should be collected while executing the test
   // collectCoverage: false,
@@ -142,10 +143,7 @@ module.exports = {
   // testLocationInResults: false,
 
   // The glob patterns Jest uses to detect test files
-  // testMatch: [
-  //   "**/__tests__/**/*.[jt]s?(x)",
-  //   "**/?(*.)+(spec|test).[tj]s?(x)"
-  // ],
+  testMatch: ["**/__tests__/**/*.[jt]s?(x)", "**/?(*.)+(spec|test).[tj]s?(x)"],
 
   // An array of regexp pattern strings that are matched against all test paths, matched tests are skipped
   // testPathIgnorePatterns: [
@@ -153,7 +151,7 @@ module.exports = {
   // ],
 
   // The regexp pattern or array of patterns that Jest uses to detect test files
-  // testRegex: [],
+  // testRegex: ["**/*.ts"],
 
   // This option allows the use of a custom results processor
   // testResultsProcessor: undefined,
@@ -169,9 +167,12 @@ module.exports = {
 
   // A map from regular expressions to paths to transformers
   // transform: undefined,
-  transform: {
-    "^.+\\.tsx?$": "esbuild-jest",
-  },
+  // transform: {
+  //   "^.+\\.tsx?$": "esbuild-jest",
+  // },
+  // transform: {
+  //   ".*": "<rootDir>/jest.dependency.js",
+  // },
 
   // An array of regexp pattern strings that are matched against all source file paths, matched files will skip transformation
   transformIgnorePatterns: ["/node_modules/", "\\.pnp\\.[^\\/]+$"],
@@ -186,5 +187,5 @@ module.exports = {
   // watchPathIgnorePatterns: [],
 
   // Whether to use watchman for file crawling
-  // watchman: true,
+  watchman: true,
 };

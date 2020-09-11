@@ -16,8 +16,6 @@ import { RouteGenericInterface } from "fastify/types/route";
 import { IncomingMessage, ServerResponse } from "http";
 import { Http2ServerRequest, Http2ServerResponse } from "http2";
 
-const pwd = (...args: string[]) => resolve(process.cwd(), ...args);
-
 export type IRequest = FastifyRequest<
   RouteGenericInterface,
   any,
@@ -126,7 +124,7 @@ fast.useCors = () => {
 fast.register(fastfyHelment);
 fast.register(fastifyCompress);
 fast.register(fastifyStatic, {
-  root: pwd("./static"),
+  root: resolve(__dirname, "./view"),
 });
 
 // Run the server!

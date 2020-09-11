@@ -25,6 +25,15 @@
       "npm run eslint-server"
     ]
   },
+  "dependencies": {
+    "node-fetch": "^2.6.1",
+    "fastify": "^3.1.1",
+    "fastify-compress": "^3.2.2",
+    "fastify-cors": "^4.1.0",
+    "fastify-helmet": "^4.0.2",
+    "fastify-static": "^3.2.0",
+    "fs-extra": "^9.0.1"
+  },
   "devDependencies": {
     "@babel/core": "^7.11.6",
     "@babel/preset-env": "^7.11.5",
@@ -43,16 +52,9 @@
     "eslint-plugin-cypress": "^2.11.1",
     "eslint-plugin-jest": "^24.0.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "fastify": "^3.1.1",
-    "fastify-compress": "^3.2.2",
-    "fastify-cors": "^4.1.0",
-    "fastify-helmet": "^4.0.2",
-    "fastify-static": "^3.2.0",
-    "fs-extra": "^9.0.1",
     "husky": "^4.2.5",
     "jest": "^26.4.2",
     "lint-staged": "^10.2.11",
-    "node-fetch": "^2.6.1",
     "open-cli": "^6.0.1",
     "prettier": "^2.0.5",
     "rollup": "^2.23.0",

@@ -6,5 +6,4 @@ console.log(require("./env.js"));
 
 // 开发环境打开 cors
 fast.useCors();
-fast.useStatic();
 fast.Start(4200);

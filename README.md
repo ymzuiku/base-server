@@ -86,6 +86,12 @@ const env = require("./env.js");
 
 若有需要附带发布的资源文件，放置 static 文件夹中，该文件夹内的资源会在编译时拷贝至 dist
 
+若要启动静态 static 服务, 在 app.ts 中添加
+
+```js
+fast.useStatic();
+```
+
 ### 单元测试
 
 测试:

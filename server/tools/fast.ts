@@ -55,6 +55,7 @@ interface IFast extends FastifyInstance<any> {
   ServiceOPTIONS: { [url: string]: (req: IFastServiceFn) => any };
   Start: (port: number) => void;
   useCors: () => any;
+  useStatic: () => any;
 }
 
 export const fast: IFast = fastify({ logger: false }) as any;
@@ -123,9 +124,11 @@ fast.useCors = () => {
 
 fast.register(fastfyHelment);
 fast.register(fastifyCompress);
-fast.register(fastifyStatic, {
-  root: resolve(__dirname, "./view"),
-});
+fast.useStatic = () => {
+  fast.register(fastifyStatic, {
+    root: resolve(__dirname, "./view"),
+  });
+};
 
 // Run the server!
 fast.Start = async (port: number) => {

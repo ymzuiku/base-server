@@ -64,7 +64,7 @@ fast.ServiceDEL = {};
 fast.ServiceOPTIONS = {};
 
 fast.GET = (path: string, fn: (req: IFastFn) => any) => {
-  fast.ServiceGET[path] = fn;
+  fast.ServiceGET[path] = fn as any;
   fast.get(path, async (req, rep) => {
     const data = await Promise.resolve(
       fn({

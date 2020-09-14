@@ -30,18 +30,31 @@ export type IReply = FastifyReply<
   unknown
 >;
 
-export interface IFastFn {
-  body: any;
+interface HeaderTypes {
+  "Access-Control-Allow-Methods"?: string;
+  "Access-Control-Allow-Credentials"?: string;
+  "Access-Control-Allow-Origin"?: string;
+  "Content-type"?: string;
+  "Content-disposition"?: "attachment;filename=dog.zip";
+  [key: string]: any;
+}
+
+interface IFastFnHeaders {
+  setHeaders: (value: HeaderTypes) => any;
+  setFileHeaders: (name: string) => any;
   params: any;
   headers: any;
-  replyHeaders: any;
+}
+
+export interface IFastFn extends IFastFnHeaders {
+  body: any;
 }
 
 export interface IFastServiceFn {
   body?: any;
   params?: any;
   headers?: any;
-  replyHeaders?: any;
+  setHeaders?: (value: HeaderTypes) => any;
 }
 
 interface IFast extends FastifyInstance<any> {
@@ -66,50 +79,61 @@ fast.ServiceOPTIONS = {};
 
 fast.GET = (path: string, fn: (req: IFastFn) => any) => {
   fast.ServiceGET[path] = fn as any;
-  fast.get(path, async (req, rep) => {
+  fast.get(path, async (request, reply) => {
     const data = await Promise.resolve(
       fn({
-        params: req.params || {},
-        body: req.query || {},
-        headers: req.headers || {},
-        replyHeaders: rep.headers,
+        ...makeHeaderHelper(request, reply),
+        body: request.query || {},
       })
     );
     if (!data) {
-      return rep.code(400).send({ code: 400, error: "No found data" });
+      return reply.code(400).send({ code: 400, error: "No found data" });
     }
-    return rep.code(data.code || 200).send(data);
+    return reply.code(data.code || 200).send(data);
   });
 };
+
+function makeHeaderHelper(request: IRequest, reply: IReply): IFastFnHeaders {
+  return {
+    params: request.params || {},
+    headers: request.headers || {},
+    setHeaders: (v: any) => reply.headers(v),
+    setFileHeaders: (name: string) => {
+      reply.headers({
+        "Content-disposition": `attachment;filename=${name}` as any,
+        "Content-type": "application/text",
+      });
+    },
+  };
+}
 
 function baseFn(key: string) {
   return (path: string, fn: (req: IFastFn) => any) => {
     (fast as any)[`Service${key.toLocaleUpperCase()}`][path] = fn;
-    (fast as any)[key](path, async (req: IRequest, rep: IReply) => {
+    (fast as any)[key](path, async (request: IRequest, reply: IReply) => {
       let body: any;
       try {
-        if (req.body) {
-          body = JSON.parse(req.body as any);
+        if (request.body) {
+          body = JSON.parse(request.body as any);
         } else {
           body = {};
         }
       } catch (err) {
-        return rep.code(401).send({ code: 400, error: "body parse error" });
+        return reply.code(401).send({ code: 400, error: "body parse error" });
       }
+      reply.headers({ aa: "bb" });
       const data = await Promise.resolve(
         fn({
-          params: req.params || {},
+          ...makeHeaderHelper(request, reply),
           body,
-          headers: req.headers || {},
-          replyHeaders: rep.headers,
         })
       );
       if (!data) {
-        return rep
+        return reply
           .code(500)
           .send({ code: 500, error: "Server no return data" });
       }
-      return rep.code(data.code || 200).send(data);
+      return reply.code(data.code || 200).send(data);
     });
   };
 }
